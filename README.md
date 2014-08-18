@@ -54,4 +54,4 @@ Not 100% sure if this will work on all versions of the Supermicro IPMI implement
 
 ## Licence
 
-[The MIT License (MIT)](https://github.com/phillipsnick/supermicro-ipmi/blob/master/LICENCE)
+[The MIT License (MIT)](https://github.com/phillipsnick/supermicro-ipmi/blob/master/LICENSE)
