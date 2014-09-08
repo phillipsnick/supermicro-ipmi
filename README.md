@@ -5,7 +5,7 @@ Simple module for accessing and controlling the IPMI interface on Supermicro mot
 ## Installation
 
 ```
-npm install supermicro-ipmi --save
+npm install supermicro-ipmi
 ```
 
   
@@ -17,33 +17,112 @@ First create an instance
 var ipmi = require('supermicro-ipmi');
 
 var server1 = new ipmi({
-  host: 'IP Address/Hostname',
+  host: '', // IP Address/Hostname
   port: 80,
   username: 'ADMIN',
   password: 'ADMIN'
 });
 ```
 
-All API methods currently use a callback to provide the response back to you.
 
+## Methods
 
-### Methods
+### getHostAddress()
 
-To fetch the count of outlets on the PDU.
+Basic method to construct the URL for HTTP request
 
-```javascript
-pdu.fetchTotalOutlets(function(err, totalOutlets) {
+__Example__
+
+```js
+console.log(server1.getHostAddress());
+
+// example output: http://192.168.0.10:80/
+```
+
+---------------------------------------
+
+### login(callback)
+
+Method to prevent code duplication of the login process required when performing actions via HTTP.
+
+__Arguments__
+
+* `callback(err)` - Action to perform once the login request has been made
+
+__Example__
+
+```js
+server1.login(function(err) {
   if (err) {
-    // optional error call back function
-    // error variable provided as a object
+    callback(err);
     return;
   }
-  // totalOutlets now contains an integer with the total number of outlets
+
+  console.log('We are successfully logged in');
 });
 ```
-  
-To be continuned...
 
+---------------------------------------
+
+### getCurrentPowerState(callback)
+
+Get the current power state of the host.
+
+__Arguments__
+
+* `callback(err, powerState)` - Callback function for error/response handling
+
+__Example__
+
+```js
+server1.getCurrentPowerState(function(err, state) {
+  if (err) {
+    console.log(err);
+    return;
+  }
+
+  if (state == 1) {
+    console.log('The server is currently online');
+  } else {
+    console.log('The server is currently offline');
+  }
+});
+```
+
+---------------------------------------
+
+### setPowerAction(powerAction, callback)
+
+Perform a power action on the server
+
+__Arguments__
+
+* `powerAction` - Integer containing the power action to perform, see the table below for valid options
+* `callback(err)` - Callback function for error/success handling
+
+All power actions are available within `supermicro.powerAction` object.
+
+|State|powerAction|
+|-----|-----------|
+|3|RESET|
+|0|OFF_IMMEDIATE|
+|5|OFF_ORDERLY|
+|1|ON|
+|2|CYCLE|
+
+__Example__
+
+```js
+server1.setPowerAction(supermicro.powerAction.ON, function(err) {
+  if (err) {
+    console.log(err);
+    return;
+  }
+
+  console.log('Successfully sent request to power server on');
+});
+
+```
   
 ## Notes
 
